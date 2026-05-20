@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: callcenter_backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - PORT=4000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: callcenter_frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      # Si tienes variables locales para el frontend:
+      - ./frontend/.env.local
+    environment:
+      # Asegura que el frontend se comunique con el backend publicado en localhost
+      - NEXT_PUBLIC_API_URL=http://localhost:4000/api
+    depends_on:
+      - backend
+    restart: unless-stopped
